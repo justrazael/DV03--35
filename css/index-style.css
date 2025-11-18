@@ -1,0 +1,78 @@
+:root{
+  --page-bg: #23174A;
+  --accent: #4E3AA2;
+  --text: #ffffff;
+  --muted: rgba(255,255,255,0.90);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:var(--page-bg);
+  font-family: 'Gantari', sans-serif;
+  color:var(--text);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:40px;
+}
+
+/* Center container */
+.home-container{
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* Welcome box constrains the content width and positions text */
+.welcome-box{
+  max-width:820px;
+  width:100%;
+  text-align:left;
+}
+
+/* The purple banner behind the heading */
+.home-banner{
+  display:inline-block;
+  background:var(--accent);
+  color:var(--text);
+  padding:16px 56px;
+  font-size:28px;
+  font-weight:700;
+  border-radius:4px;
+  letter-spacing:0.3px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+}
+
+/* Intro paragraph styling */
+.home-intro{
+  margin-top:28px;
+  color:var(--muted);
+  font-size:18px;
+  line-height:1.6;
+  max-width:640px;
+}
+
+/* Get started button (pill) */
+.btn{
+  display:inline-block;
+  margin-top:28px;
+  background:var(--accent);
+  color:var(--text);
+  padding:10px 34px;
+  border-radius:999px;
+  text-decoration:none;
+  font-weight:600;
+  font-size:16px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+}
+
+/* Adjustments for smaller screens */
+@media (max-width:640px){
+  .banner{ font-size:20px; padding:12px 28px; }
+  .intro{ font-size:16px; }
+  .welcome-box{ padding:0 16px; text-align:center; }
+  .banner{ display:block; margin:0 auto; }
+  .btn{ display:inline-block; margin-left:auto; margin-right:auto; }
+}
