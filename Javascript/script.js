@@ -42,13 +42,9 @@ function updateTab(tabId) {
                 updateTotalFinesDisplay();
             }
             if (mobileOffencesData.length > 0) {
-                drawMobileOffencesBarChart(); // Draw the bottom chart
+                drawMobileOffencesBarChart(); 
             }
         } 
-        // (Optional) If you still keep the second tab
-        else if (tabId === 'annualFinesForMobilePhoneUse') {
-            // You can draw it there too if you kept the old HTML
-        }
     }, 50);
 }
 
@@ -95,6 +91,7 @@ function drawAustraliaMap() {
 }
 
 // --- 2. LINE CHART (Top Right) ---
+// UPDATED: Now filters based on currentYear slider
 function drawLineChart() {
     const container = d3.select("#line-chart-fines");
     let w = container.node().clientWidth || 500;
@@ -107,24 +104,36 @@ function drawLineChart() {
     const svg = container.append("svg").attr("width", w).attr("height", h)
         .append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const filteredData = annualFinesData.filter(d => d.Jurisdiction === selectedJurisdiction);
-    filteredData.sort((a, b) => a.Year - b.Year);
+    // 1. Get ALL data for this jurisdiction (to calculate fixed Max Y-Axis)
+    const fullHistoryData = annualFinesData.filter(d => d.Jurisdiction === selectedJurisdiction);
+    
+    // 2. Get data ONLY up to the current year slider (for the line)
+    const visibleData = fullHistoryData.filter(d => d.Year <= currentYear);
+    visibleData.sort((a, b) => a.Year - b.Year);
 
-    if (filteredData.length === 0) {
+    if (visibleData.length === 0) {
         svg.append("text").attr("x", width/2).attr("y", height/2).attr("text-anchor", "middle").attr("fill", "white").text("No Data");
         return;
     }
 
-    const x = d3.scaleLinear().domain(d3.extent(filteredData, d => d.Year)).range([0, width]);
-    const y = d3.scaleLinear().domain([0, d3.max(filteredData, d => d.Value)]).range([height, 0]);
+    // 3. Scales
+    // X Axis: FIXED domain from 2008 to 2024 so the chart doesn't stretch when slider moves
+    const x = d3.scaleLinear().domain([2008, 2024]).range([0, width]);
+    
+    // Y Axis: FIXED domain based on the MAX value of the FULL history (so the line doesn't jump up/down)
+    const maxY = d3.max(fullHistoryData, d => d.Value) || 100000;
+    const y = d3.scaleLinear().domain([0, maxY]).range([height, 0]);
 
+    // Draw Axes
     svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x).tickFormat(d3.format("d")));
     svg.append("g").call(d3.axisLeft(y).tickFormat(d => formatNumber(d)));
 
+    // Draw Line
     const line = d3.line().x(d => x(d.Year)).y(d => y(d.Value));
-    svg.append("path").datum(filteredData).attr("fill", "none").attr("stroke", "#00bcd4").attr("stroke-width", 2).attr("d", line);
+    svg.append("path").datum(visibleData).attr("fill", "none").attr("stroke", "#00bcd4").attr("stroke-width", 2).attr("d", line);
 
-    svg.selectAll("circle").data(filteredData).enter().append("circle")
+    // Draw Dots
+    svg.selectAll("circle").data(visibleData).enter().append("circle")
         .attr("cx", d => x(d.Year)).attr("cy", d => y(d.Value)).attr("r", 4).attr("fill", "#00bcd4")
         .on("mouseover", (event, d) => showTooltip(event, `Year: ${d.Year}<br>Fines: $${formatNumber(d.Value)}`))
         .on("mouseout", hideTooltip);
@@ -132,18 +141,20 @@ function drawLineChart() {
     // Titles
     svg.append("text").attr("x", width/2).attr("y", height + 40).attr("text-anchor", "middle").attr("fill", "#e0e0e0").text("Year");
     svg.append("text").attr("transform", "rotate(-90)").attr("y", -55).attr("x", -height/2).attr("text-anchor", "middle").attr("fill", "#e0e0e0").text("Total Fines ($)");
-    svg.append("text").attr("x", width/2).attr("y", -10).attr("text-anchor", "middle").attr("fill", "#e0e0e0").style("font-size", "14px").text(`Annual Fines Trend: ${selectedJurisdiction}`);
+    
+    // Chart Title
+    svg.append("text").attr("x", width/2).attr("y", -10).attr("text-anchor", "middle").attr("fill", "#e0e0e0")
+       .style("font-size", "14px")
+       .text(`Annual Fines Trend (2008 - ${currentYear}): ${selectedJurisdiction}`);
 }
 
 // --- 3. BAR CHART (Bottom - Mobile Offences) ---
 function drawMobileOffencesBarChart() {
-    // TARGET THE NEW ID IN HTML
     const container = d3.select("#mobile-bar-chart-bottom");
     
-    // Ensure size
     let w = container.node().clientWidth || 800;
     let h = container.node().clientHeight || 400;
-    if(w === 0) w = 800; // Fallback
+    if(w === 0) w = 800; 
     
     container.html(""); 
 
@@ -179,7 +190,7 @@ function drawMobileOffencesBarChart() {
         .attr("y", d => y(d.Offences_per_10000_Licence_Holders))
         .attr("width", x.bandwidth())
         .attr("height", d => height - y(d.Offences_per_10000_Licence_Holders))
-        .attr("fill", d => d.Jurisdiction === selectedJurisdiction ? "#00bcd4" : "#ff7f0e") // Highlight selected
+        .attr("fill", d => d.Jurisdiction === selectedJurisdiction ? "#00bcd4" : "#ff7f0e") 
         .on("mouseover", (event, d) => showTooltip(event, `<strong>${d.Jurisdiction}</strong><br>Rate: ${d.Offences_per_10000_Licence_Holders.toFixed(1)}`))
         .on("mouseout", hideTooltip);
 
@@ -213,8 +224,13 @@ document.getElementById('yearSlider').addEventListener('input', function() {
     const mobileTitle = document.getElementById('mobileYearDisplay');
     if(mobileTitle) mobileTitle.textContent = currentYear;
 
-    if(annualFinesData.length > 0) { updateTotalFinesDisplay(); drawLineChart(); }
-    if(mobileOffencesData.length > 0) drawMobileOffencesBarChart();
+    if(annualFinesData.length > 0) { 
+        updateTotalFinesDisplay(); 
+        drawLineChart(); // Redraw line chart with new year filter
+    }
+    if(mobileOffencesData.length > 0) {
+        drawMobileOffencesBarChart();
+    }
 });
 
 document.getElementById('jurisdictionSelect').addEventListener('change', function() {
@@ -237,7 +253,7 @@ document.querySelectorAll('.nav-link').forEach(link => {
 
 // --- DATA LOADING ---
 Promise.all([
-    d3.csv("Sum of fines.csv", d => ({ Year: +d.YEAR, Jurisdiction: d.JURISDICTION, Value: +d["Sum(FINES)"] })),
+    d3.csv("Sum of fine.csv", d => ({ Year: +d.YEAR, Jurisdiction: d.JURISDICTION, Value: +d["Sum(FINES)"] })),
     d3.csv("fines of each year.csv", d => ({ Year: +d["Year=YEAR"], Jurisdiction: d.JURISDICTION, Offences_per_10000_Licence_Holders: +d["Rate_per_10000_Holders"] })),
     d3.json("australia_states.json")
 ]).then(([fines, mobile, geo]) => {
