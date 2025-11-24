@@ -7,27 +7,56 @@
     <meta name="keywords" content="HTML, CSS, JavaScript">
     <meta name="author" content="Razael Jikos Gidiman">
     <link rel="stylesheet" href="css/page3-style.css">
-    <script src="js/navbar.js"></script>
+     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Gantari:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
 <header>
     <div class="nav-container"></div>
 </header>
 <body>
-    <h1>Major cities VS Regional Australia</h1>
-    <div id="grouped-bar-chart-page3" class="responsive-svg-container"></div>
-    <h1>Bar chart — Age Group with the Most Fines</h1>
-    <div id="age-bar-chart-page3" class="responsive-svg-container"></div>
-    <h1>Heatmap — Age groups by Jurisdiction</h1>
-    <div id="heatmap-page3" class="responsive-svg-container"></div>
+    <h1>Mobile Phone Use Fines by Age and Locations</h1>
+    
+    <div class="controls-container" style="text-align: center; margin: 20px 0;">
+        <label for="year-filter" style="font-family: sans-serif; font-size: 1.1em; margin-right: 10px; color: #fff">Filter by Year:</label>
+        <select id="year-filter" style="padding: 5px 15px; font-size: 1rem; border-radius: 5px; border: 1px solid #ccc;">
+            <option value="All">All Years</option>
+            <option value="2023">2023</option>
+            <option value="2024">2024</option>
+        </select>
+    </div>
+    
+    <div class="dashboard-container">
+        
+        <div class="chart-card">
+            <div class="chart-title">Age Groups with the Most Fines</div>
+            <div id="barchart-container" class="responsive-svg-container"></div>
+        </div>
+
+        <div class="chart-card">
+            <div class="chart-title">Heatmap: Fines by Jurisdiction and Age Group</div>
+            <div id="heatmap-container" class="responsive-svg-container"></div>
+        </div>
+        
+        <div class="chart-card">
+            <div class="chart-title">Locations with the Most Fines</div>
+            <div id="piechart-container" class="responsive-svg-container"></div>
+        </div>
+        
+    </div>
+    <script src="js/navbar.js"></script>
     <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="js/chart-page3.js"></script>
     <script src="js/barchart-page3.js"></script>
     <script src="js/heatmap-page3.js"></script>
-    <script src="js/load-data-page3.js"></script>
+    <script src="js/piechart-page3.js"></script>
+    
+    <script src="js/D3 Data Loader.js"></script>
+    <script src="js/interactions.js"></script>
 </body>
 <footer>
     <div class="footer-content">
-      <span class="footer-left">© Data Visualization Project - Razael Jikos Gidiman</span>
+      <span class="footer-left">© 2025 Razael Jikos Gidiman</span>
+      <span class="footer-right">Generated using GenAI</span>
     </div>
 </footer>
+</html>
