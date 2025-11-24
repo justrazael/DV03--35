@@ -1,12 +1,20 @@
-*{
-  font-family: gantari, Arial;
+/*
+ * General Styles
+ */
+* {
+  font-family: Gantari, Arial, sans-serif;
 }
 
 html, body {
   margin: 0;
   padding: 0;
+  background-color: #23174A;
+  color: #333;
 }
 
+/*
+ * Navigation Styles
+ */
 .nav-container {
   display: flex;
   align-items: center; 
@@ -22,6 +30,7 @@ html, body {
   background-color: #4E3AA2;
   padding-left: 3em;
   font-weight: bold;
+  margin: 0;
 }
 
 .nav-container li {
@@ -38,7 +47,7 @@ html, body {
   transform: translateY(-50%);
   width: 0.1em;
   height: 2em;
-  background: #888; /* Line color */
+  background: #888;
 }
 
 .nav-container li a{
@@ -51,21 +60,133 @@ html, body {
    color: #7356e7;
 }
 
-body {
-  background-color: #23174A;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  margin: 0;
-  padding: 0;
+/*
+ * Filter Section
+ */
+.filter-controls-container {
+    text-align: center;
+    padding: 1rem 0;
+    background: white;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 1rem;
 }
 
-footer {
+.filter-controls-container label {
+    font-weight: bold;
+    margin-right: 10px;
+    color: #4E3AA2;
+}
+
+.filter-buttons {
+    display: inline-block;
+}
+
+.filter-button {
+    padding: 8px 16px;
+    margin: 0 5px;
+    border: 1px solid #4E3AA2;
+    background: white;
+    color: #4E3AA2;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.filter-button:hover {
+    background: #f0f0f0;
+}
+
+.filter-button.active {
+    background: #4E3AA2;
+    color: white;
+}
+
+/*
+ * Dashboard Layout
+ */
+h1 {
+    text-align: center;
+    padding: 1em 0 0.5em 0;
+    margin: 0;
+    font-size: 2.5em;
+    color: #ffff;
+    background-color: #23174A;
+}
+
+.dashboard-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+    .dashboard-container {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.chart-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+    min-height: 450px; 
+    display: flex;
+    flex-direction: column;
+}
+
+.chart-title {
+    font-size: 1.25em;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 1em;
+    padding-bottom: 0.5em;
+    border-bottom: 2px solid #eee;
+}
+
+.responsive-svg-container {
+    flex-grow: 1; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+/*
+ * Tooltip Styles (CRITICAL FIX)
+ */
+.chart-tooltip {
+    position: absolute; /* Essential for floating */
+    top: 0;
+    left: 0;
+    text-align: center;
+    padding: 8px;
+    font: 12px sans-serif;
+    background: rgba(50, 50, 50, 0.9);
+    color: white;
+    border-radius: 4px;
+    pointer-events: none; /* Allows mouse to pass through to chart */
+    opacity: 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    z-index: 9999; /* Ensure it sits on top of everything */
+    transform: translate(-50%, -100%); /* Centers tooltip above cursor */
+    transition: opacity 0.1s;
+}
+
+/* Heatmap specific */
+.heatmap-cell:hover {
+    stroke: black;
+    stroke-width: 2px;
+}
+
+.footer-content{
   background-color: #4E3AA2;
-  padding-bottom: 1em;
-  width: 100%;
-  height: 2em;
-  margin-top: auto;
+  padding: 0.5em;
+  text-align:left;
+  color: white;
 }
 
 footer span{
@@ -77,19 +198,18 @@ footer span{
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
-  height: 100%;
   margin: auto;
 }
 
 .footer-left {
   text-align: left;
   padding-left: 2em;
-  padding-top: 1em;
+  padding-top: 0.2em;
 }
 
-.responsive-svg-container{
-  width:100%;
-  max-width:1200px;
-  border: 2px solid #ccc;
+.footer-right {
+  text-align: right;
+  padding-top: 0.2em;
+  padding-right: 2em;
 }
+

@@ -1,130 +1,115 @@
-// js/barchart-page3.js
-// Draw a bar chart of fines by age group.
-// Exposes: drawBarByAge(data, options)
-// data: [{ age_group: "25-34", fines: 123, count: 10 }, ...]
-// options: { container, width, height, title, xLabel, yLabel, color, showValues, sortBy }
-function drawBarByAge(data, options = {}) {
-  const containerSelector = options.container || "#age-bar-chart-page3";
-  const container = d3.select(containerSelector);
-  if (container.empty()) {
-    console.error("Container not found:", containerSelector);
-    return;
-  }
+/* global d3 */
 
-  const width = options.width || 800;
-  const height = options.height || 420;
-  const margin = options.margin || { top: 40, right: 20, bottom: 120, left: 80 };
-  const innerWidth = width - margin.left - margin.right;
-  const innerHeight = height - margin.top - margin.bottom;
+/**
+ * Draws a D3 bar chart for the Age Groups with the Most Fines.
+ * @param {Array<object>} data - The dataset for the bar chart.
+ * @param {string} selector - The ID of the container element.
+ */
+function drawBarChart(data, selector) {
+    // 1. Clear existing SVG
+    d3.select(selector).select('svg').remove();
+    
+    // 2. Remove existing tooltip to prevent duplicates
+    d3.select('#tooltip-barchart').remove();
 
-  // If count present and options.useMean true (or data contains count keys), compute mean per entry
-  const hasCount = data.some(d => d.hasOwnProperty("count") && +d.count > 0);
-  const useMean = options.forceMean || (options.useMean === true) || hasCount;
+    // 3. Create new Tooltip attached to body
+    const tooltip = d3.select('body').append('div')
+        .attr('id', 'tooltip-barchart')
+        .attr('class', 'chart-tooltip')
+        .style('opacity', 0);
+    
+    // Sort data
+    data.sort((a, b) => b['Mean(FINES)'] - a['Mean(FINES)']);
+    
+    // Setup dimensions
+    const container = d3.select(selector);
+    const containerWidth = container.node().getBoundingClientRect().width;
+    const containerHeight = container.node().getBoundingClientRect().height;
 
-  // prepare values: either mean = fines/count or total fines
-  const prepared = data.map(d => {
-    const fines = +d.fines || 0;
-    const count = d.hasOwnProperty("count") ? +d.count : null;
-    const value = (useMean && count && count > 0) ? (fines / count) : fines;
-    return { age_group: d.age_group || "Unknown", fines, count, value };
-  });
+    const margin = { top: 30, right: 20, bottom: 80, left: 60 };
+    const width = containerWidth - margin.left - margin.right;
+    const height = containerHeight - margin.top - margin.bottom;
 
-  // optional sorting
-  const sortBy = options.sortBy || "age"; // "age" | "value_desc" | "value_asc"
-  if (sortBy === "value_desc") prepared.sort((a,b) => b.value - a.value);
-  else if (sortBy === "value_asc") prepared.sort((a,b) => a.value - b.value);
-  // else keep original order (useful if you want age order preserved)
+    // Create SVG
+    const svg = container.append('svg')
+        .attr('width', containerWidth)
+        .attr('height', containerHeight)
+        .append('g')
+        .attr('transform', `translate(${margin.left},${margin.top})`);
+    
+    // Scales
+    const x = d3.scaleBand()
+        .domain(data.map(d => d.AGE_GROUP))
+        .range([0, width])
+        .padding(0.2);
 
-  // x domain: age groups
-  const xDomain = prepared.map(d => d.age_group);
-  const x = d3.scaleBand().domain(xDomain).range([0, innerWidth]).padding(0.12);
+    const y = d3.scaleLinear()
+        .domain([0, d3.max(data, d => d['Mean(FINES)'])])
+        .nice()
+        .range([height, 0]);
 
-  // y domain
-  const yMax = d3.max(prepared, d => d.value) || 0;
-  const y = d3.scaleLinear().domain([0, yMax * 1.08 || 10]).nice().range([innerHeight, 0]);
+    const color = d3.scaleOrdinal()
+        .domain(data.map(d => d.AGE_GROUP))
+        .range(d3.schemeCategory10);
 
-  // color
-  const barColor = options.color || (options.colorMap && options.colorMap.bar) || "#4E3AA2";
-  const valueFormat = options.valueFormat || (useMean ? d3.format(".1f") : d3.format("~s"));
-
-  // clear
-  container.selectAll("*").remove();
-
-  const svg = container.append("svg")
-    .attr("viewBox", `0 0 ${width} ${height}`)
-    .attr("preserveAspectRatio", "xMidYMid meet")
-    .style("width", "100%")
-    .style("height", "auto");
-
-  const chart = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
-
-  // bars
-  chart.selectAll(".bar")
-    .data(prepared)
-    .join("rect")
-      .attr("class", "bar")
-      .attr("x", d => x(d.age_group))
-      .attr("y", d => y(d.value))
-      .attr("width", x.bandwidth())
-      .attr("height", d => innerHeight - y(d.value))
-      .attr("fill", barColor)
-      .attr("stroke", "#fff")
-      .attr("stroke-width", 1)
-      .append("title")
-        .text(d => {
-          if (d.count != null) {
-            return `${d.age_group}: ${valueFormat(d.value)} (sum=${d.fines}, n=${d.count})`;
-          }
-          return `${d.age_group}: ${valueFormat(d.value)}`;
+    // Draw Bars with updated mouse events
+    svg.selectAll('.bar')
+        .data(data)
+        .enter().append('rect')
+        .attr('class', 'bar')
+        .attr('x', d => x(d.AGE_GROUP))
+        .attr('y', height)
+        .attr('width', x.bandwidth())
+        .attr('height', 0)
+        .attr('fill', d => color(d.AGE_GROUP))
+        .style('cursor', 'pointer')
+        .transition()
+        .duration(1000)
+        .delay((d, i) => i * 100)
+        .attr('y', d => y(d['Mean(FINES)']))
+        .attr('height', d => height - y(d['Mean(FINES)']))
+        .on('end', function() {
+            d3.select(this)
+                .on('mouseover', function(event, d) {
+                    d3.select(this).attr('opacity', 0.8);
+                    tooltip.style('opacity', 0.9);
+                })
+                .on('mousemove', function(event, d) {
+                    // Update position dynamically as mouse moves
+                    tooltip.html(`Age: <b>${d.AGE_GROUP}</b><br>Avg Fines: <b>${d3.format(',.0f')(d['Mean(FINES)'])}</b>`)
+                        .style('left', (event.pageX) + 'px')
+                        .style('top', (event.pageY - 10) + 'px');
+                })
+                .on('mouseout', function() {
+                    d3.select(this).attr('opacity', 1);
+                    tooltip.style('opacity', 0);
+                });
         });
 
-  // axes
-  const xAxis = d3.axisBottom(x);
-  const yAxis = d3.axisLeft(y).ticks(6).tickFormat(valueFormat);
+    // Axes
+    svg.append('g')
+        .attr('transform', `translate(0,${height})`)
+        .call(d3.axisBottom(x))
+        .selectAll('text')
+        .attr('transform', 'rotate(-45)')
+        .style('text-anchor', 'end');
 
-  chart.append("g")
-    .attr("transform", `translate(0,${innerHeight})`)
-    .call(xAxis)
-    .selectAll("text")
-      .attr("transform", "rotate(-40)")
-      .attr("text-anchor", "end")
-      .attr("dx", "-0.4em")
-      .attr("dy", "0.6em");
+    svg.append('text')
+        .attr('class', 'x-axis-label')
+        .attr('x', width / 2)
+        .attr('y', height + margin.bottom - 10)
+        .style('text-anchor', 'middle')
+        .text('Age Group');
 
-  chart.append("g").call(yAxis);
+    svg.append('g')
+        .call(d3.axisLeft(y).tickFormat(d3.format('.2s')));
 
-  // labels
-  svg.append("text")
-    .attr("x", margin.left + innerWidth / 2)
-    .attr("y", height - 12)
-    .attr("text-anchor", "middle")
-    .attr("fill", "#222")
-    .text(options.xLabel || "Age group");
-
-  svg.append("text")
-    .attr("transform", `translate(18, ${margin.top + innerHeight / 2}) rotate(-90)`)
-    .attr("text-anchor", "middle")
-    .attr("fill", "#222")
-    .text(options.yLabel || (useMean ? "Mean fines" : "Sum of fines"));
-
-  // title
-  svg.append("text")
-    .attr("x", margin.left + 6)
-    .attr("y", 18)
-    .attr("font-weight", 700)
-    .text(options.title || (useMean ? "Mean fines by Age Group" : "Fines by Age Group"));
-
-  // show values above bars
-  if (options.showValues) {
-    chart.selectAll(".val")
-      .data(prepared)
-      .join("text")
-        .attr("class", "val")
-        .attr("x", d => x(d.age_group) + x.bandwidth() / 2)
-        .attr("y", d => y(d.value) - 6)
-        .attr("text-anchor", "middle")
-        .attr("fill", "#222")
-        .attr("font-size", "11px")
-        .text(d => (d.value > 0 ? valueFormat(d.value) : ""));
-  }
+    svg.append('text')
+        .attr('class', 'y-axis-label')
+        .attr('transform', 'rotate(-90)')
+        .attr('y', 0 - margin.left)
+        .attr('x', 0 - (height / 2))
+        .attr('dy', '1em')
+        .style('text-anchor', 'middle')
+        .text('Mean Fines (AUD)');
 }
