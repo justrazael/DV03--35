@@ -40,9 +40,12 @@ function drawHeatmap(data, selector) {
     const y = d3.scaleBand().range([height, 0]).domain(ageGroups).padding(0.05);
         
     const maxFines = d3.max(data, d => d['Mean(FINES)']);
+    
+    // START COLOR CHANGE: Using d3.interpolateRgb for custom color gradient (light yellow to dark blue)
     const colorScale = d3.scaleSequential()
-        .interpolator(d3.interpolateViridis)
+        .interpolator(d3.interpolateRgb('lightyellow', 'darkblue'))
         .domain([0, maxFines]);
+    // END COLOR CHANGE
     
     // Draw Cells
     svg.selectAll('.cell')

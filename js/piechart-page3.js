@@ -48,7 +48,7 @@ function drawPieChart(data, selector) {
 
     const pie = d3.pie().value(d => d['Mean(FINES)']).sort(null);
     const arc = d3.arc().innerRadius(0).outerRadius(radius);
-    const outerArc = d3.arc().innerRadius(radius * 0.9).outerRadius(radius * 0.9);
+    const outerArc = d3.arc().innerRadius(radius * 1.05).outerRadius(radius * 1.05);
 
     // --- Draw Pie Slices ---
     const arcs = g.selectAll('arc')
@@ -124,6 +124,8 @@ function drawPieChart(data, selector) {
         .style('pointer-events', 'none');
 
     // --- Legend ---
+    const totalFines = d3.sum(data, d => d['Mean(FINES)']);
+
     const legendGroup = svg.append('g')
         .attr('class', 'legend')
         .attr('transform', `translate(${chartWidth}, 20)`); // Position to the right of the chart
@@ -143,9 +145,14 @@ function drawPieChart(data, selector) {
     // Text Label
     legendItems.append('text')
         .attr('x', 20)
-        .attr('y', 11) // Align vertically center to rect
-        .text(d => d.LOCATION)
+        .attr('y', 11)
+        .text(d => {
+            const percentage = (d['Mean(FINES)'] / totalFines) * 100;
+            const avgFines = d3.format(',.0f')(d['Mean(FINES)']);
+            return `${d.LOCATION.split(' ')[0]} ${d3.format('.1f')(percentage)}% (${avgFines})`;
+        })
         .style('font-size', '12px')
         .style('alignment-baseline', 'middle')
         .attr('fill', '#333');
+
 }

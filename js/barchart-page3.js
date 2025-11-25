@@ -85,6 +85,24 @@ function drawBarChart(data, selector) {
                     tooltip.style('opacity', 0);
                 });
         });
+    
+    // -------------- Add Bar Labels --------------
+    svg.selectAll('.bar-label')
+        .data(data)
+        .enter()
+        .append('text')
+        .attr('class', 'bar-label')
+        .attr('x', d => x(d.AGE_GROUP) + x.bandwidth() / 2)
+        .attr('y', height)              // start from bottom
+        .attr('text-anchor', 'middle')
+        .style('opacity', 0)
+        .transition()
+        .duration(1000)
+        .delay((d, i) => i * 100)
+        .attr('y', d => y(d['Mean(FINES)']) - 5) // place above bar
+        .style('opacity', 1)
+        .text(d => d3.format(',.0f')(d['Mean(FINES)']));
+
 
     // Axes
     svg.append('g')
