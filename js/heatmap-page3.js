@@ -23,7 +23,7 @@ function drawHeatmap(data, selector) {
     const containerWidth = container.node().getBoundingClientRect().width;
     const containerHeight = container.node().getBoundingClientRect().height;
 
-    const margin = { top: 60, right: 20, bottom: 80, left: 60 };
+    const margin = { top: 60, right: 20, bottom: 80, left: 65 };
     const width = containerWidth - margin.left - margin.right;
     const height = containerHeight - margin.top - margin.bottom;
 
@@ -109,7 +109,7 @@ function drawHeatmap(data, selector) {
     const legendHeight = 15;
     const legendWidth = 200;
     const legendSvg = svg.append('g')
-        .attr('transform', `translate(${width - legendWidth}, -${margin.top / 2})`);
+        .attr('transform', `translate(${width - legendWidth}, -${margin.top / 1})`);
         
     const linearGradient = svg.append('defs')
         .append('linearGradient')
