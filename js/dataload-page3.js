@@ -7,8 +7,6 @@ let rawLocationFinesData = [];
 
 /**
  * Parses a CSV row, converting the fine mean to a number.
- * @param {object} d The data row from the CSV.
- * @returns {object} The parsed data row.
  */
 function rowParser(d) {
     d['Mean(FINES)'] = +d['Mean(FINES)'];
@@ -49,13 +47,10 @@ function aggregateBarChartData(data) {
 }
 
 /**
- * Filters the raw data based on the selected year AND selected age group
- * This function is exposed globally to be called from interactions.js.
- * @param {string} selectedYear - 'All', '2023', '2024'
- * @param {string} selectedAge - 'All', '0-16', '17-25', etc.
+ * Filters raw data based on selected year, age group, and jurisdiction.
  */
-function updateCharts(selectedYear, selectedAge = 'All') {
-    console.log(`Updating charts → Year: ${selectedYear}, Age: ${selectedAge}`);
+function updateCharts(selectedYear, selectedAge = 'All', selectedJurisdiction = 'All') {
+    console.log(`Updating charts → Year: ${selectedYear}, Age: ${selectedAge}, Jurisdiction: ${selectedJurisdiction}`);
 
     // YEAR FILTER
     const yearFilter =
@@ -69,11 +64,21 @@ function updateCharts(selectedYear, selectedAge = 'All') {
             ? () => true
             : d => d.AGE_GROUP === selectedAge;
 
+    // ⭐ NEW: JURISDICTION FILTER (heatmap only)
+    const jurisdictionFilter =
+        selectedJurisdiction === 'All'
+            ? () => true
+            : d => d.JURISDICTION === selectedJurisdiction;
+
     // 1️⃣ Filter Data
     let barChartData = rawAgeFinesData.filter(d => yearFilter(d) && ageFilter(d));
-    let heatmapFilteredData = rawHeatmapData.filter(d => yearFilter(d) && ageFilter(d));
 
-    // Pie chart ignores age filter (correct)
+    // Heatmap applies all 3 filters
+    let heatmapFilteredData = rawHeatmapData.filter(
+        d => yearFilter(d) && ageFilter(d) && jurisdictionFilter(d)
+    );
+
+    // Pie chart ignores age + jurisdiction
     let pieChartData = rawLocationFinesData.filter(yearFilter);
 
     // 2️⃣ Aggregate if "All Years"
@@ -85,20 +90,14 @@ function updateCharts(selectedYear, selectedAge = 'All') {
     // 3️⃣ Redraw Charts
     if (typeof drawBarChart === 'function') {
         drawBarChart(barChartData, '#barchart-container');
-    } else {
-        console.error("drawBarChart function not found.");
     }
 
     if (typeof drawHeatmap === 'function') {
         drawHeatmap(heatmapFilteredData, '#heatmap-container');
-    } else {
-        console.error("drawHeatmap function not found.");
     }
 
     if (typeof drawPieChart === 'function') {
         drawPieChart(pieChartData, '#piechart-container');
-    } else {
-        console.error("drawPieChart function not found.");
     }
 }
 
@@ -121,7 +120,7 @@ function loadAndDrawCharts() {
             rawLocationFinesData = locationFinesData;
 
             // Initial draw
-            updateCharts('All', 'All');
+            updateCharts('All', 'All', 'All');
         })
         .catch(error => {
             console.error('Error loading data:', error);
