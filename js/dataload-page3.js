@@ -103,9 +103,9 @@ function loadAndDrawCharts() {
     const dataPromises = [
         // Ensure these paths match your actual folder structure. 
         // If your CSVs are in the root folder, remove 'dataset/'.
-        d3.csv('dataset/Age groups with the most Fines.csv', rowParser),
-        d3.csv('dataset/Jurisdiction, age group and fines.csv', rowParser),
-        d3.csv('dataset/Locations with the most Fines.csv', rowParser)
+        d3.csv('dataset/Age groups with the most Fines 2.csv', rowParser),
+        d3.csv('dataset/Jurisdiction, age group and fines 2.csv', rowParser),
+        d3.csv('dataset/Location and Fines 2.csv', rowParser)
     ];
 
     Promise.all(dataPromises)
