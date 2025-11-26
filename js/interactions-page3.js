@@ -1,19 +1,16 @@
-/* interactions.js */
-
 document.addEventListener('DOMContentLoaded', () => {
     const yearFilter = document.getElementById('year-filter');
+    const ageFilter = document.getElementById('age-filter');
 
-    if (yearFilter) {
-        yearFilter.addEventListener('change', (e) => {
-            const selectedYear = e.target.value;
-            console.log(`Year selected: ${selectedYear}`);
-            
-            // Call the global update function exposed by D3 Data Loader.js
-            if (window.updateCharts) {
-                window.updateCharts(selectedYear);
-            } else {
-                console.error("updateCharts function not found. Ensure D3 Data Loader.js is loaded correctly.");
-            }
-        });
+    function triggerUpdate() {
+        const selectedYear = yearFilter.value;
+        const selectedAge = ageFilter.value;
+
+        if (window.updateCharts) {
+            window.updateCharts(selectedYear, selectedAge);
+        }
     }
+
+    if (yearFilter) yearFilter.addEventListener('change', triggerUpdate);
+    if (ageFilter) ageFilter.addEventListener('change', triggerUpdate);
 });

@@ -11,17 +11,13 @@ let rawLocationFinesData = [];
  * @returns {object} The parsed data row.
  */
 function rowParser(d) {
-    // Convert the Mean(FINES) column to a number
     d['Mean(FINES)'] = +d['Mean(FINES)'];
-    // Convert YEAR to number
     d['YEAR'] = +d['YEAR'];
     return d;
 }
 
 /**
- * Helper function to aggregate pie chart data by summing fines across all years for the same location.
- * @param {Array<object>} data - Filtered location data.
- * @returns {Array<object>} The aggregated data with unique locations.
+ * Helper function to aggregate pie chart data by summing fines.
  */
 function aggregatePieChartData(data) {
     const aggregatedMap = d3.rollup(
@@ -29,7 +25,7 @@ function aggregatePieChartData(data) {
         v => d3.sum(v, d => d['Mean(FINES)']),
         d => d.LOCATION
     );
-    
+
     return Array.from(aggregatedMap, ([location, totalFines]) => ({
         LOCATION: location,
         'Mean(FINES)': totalFines
@@ -37,9 +33,7 @@ function aggregatePieChartData(data) {
 }
 
 /**
- * Helper function to aggregate bar chart data by summing fines across all years for the same age group.
- * @param {Array<object>} data - Filtered age group data.
- * @returns {Array<object>} The aggregated data with unique age groups.
+ * Helper function to aggregate bar chart data by summing fines.
  */
 function aggregateBarChartData(data) {
     const aggregatedMap = d3.rollup(
@@ -47,7 +41,7 @@ function aggregateBarChartData(data) {
         v => d3.sum(v, d => d['Mean(FINES)']),
         d => d.AGE_GROUP
     );
-    
+
     return Array.from(aggregatedMap, ([ageGroup, totalFines]) => ({
         AGE_GROUP: ageGroup,
         'Mean(FINES)': totalFines
@@ -55,40 +49,52 @@ function aggregateBarChartData(data) {
 }
 
 /**
- * Filters the raw data based on the selected year and redraws all charts.
+ * Filters the raw data based on the selected year AND selected age group
  * This function is exposed globally to be called from interactions.js.
- * @param {string} selectedYear - The year to filter by ('All', '2023', '2024').
+ * @param {string} selectedYear - 'All', '2023', '2024'
+ * @param {string} selectedAge - 'All', '0-16', '17-25', etc.
  */
-function updateCharts(selectedYear) {
-    console.log(`Updating charts for year: ${selectedYear}`);
+function updateCharts(selectedYear, selectedAge = 'All') {
+    console.log(`Updating charts → Year: ${selectedYear}, Age: ${selectedAge}`);
 
-    const yearFilter = selectedYear === 'All' ? () => true : d => d.YEAR === parseInt(selectedYear);
+    // YEAR FILTER
+    const yearFilter =
+        selectedYear === 'All'
+            ? () => true
+            : d => d.YEAR === parseInt(selectedYear);
 
-    // 1. Filter Data
-    let barChartData = rawAgeFinesData.filter(yearFilter);
-    const heatmapFilteredData = rawHeatmapData.filter(yearFilter);
+    // AGE FILTER
+    const ageFilter =
+        selectedAge === 'All'
+            ? () => true
+            : d => d.AGE_GROUP === selectedAge;
+
+    // 1️⃣ Filter Data
+    let barChartData = rawAgeFinesData.filter(d => yearFilter(d) && ageFilter(d));
+    let heatmapFilteredData = rawHeatmapData.filter(d => yearFilter(d) && ageFilter(d));
+
+    // Pie chart ignores age filter (correct)
     let pieChartData = rawLocationFinesData.filter(yearFilter);
 
-    // 2. Aggregate Data if 'All' is selected
+    // 2️⃣ Aggregate if "All Years"
     if (selectedYear === 'All') {
-        pieChartData = aggregatePieChartData(pieChartData);
-        // FIX: Aggregate bar chart data to prevent stacking/duplicates
         barChartData = aggregateBarChartData(barChartData);
+        pieChartData = aggregatePieChartData(pieChartData);
     }
-    
-    // 3. Redraw Charts
+
+    // 3️⃣ Redraw Charts
     if (typeof drawBarChart === 'function') {
         drawBarChart(barChartData, '#barchart-container');
     } else {
         console.error("drawBarChart function not found.");
     }
-    
+
     if (typeof drawHeatmap === 'function') {
         drawHeatmap(heatmapFilteredData, '#heatmap-container');
     } else {
         console.error("drawHeatmap function not found.");
     }
-    
+
     if (typeof drawPieChart === 'function') {
         drawPieChart(pieChartData, '#piechart-container');
     } else {
@@ -97,12 +103,10 @@ function updateCharts(selectedYear) {
 }
 
 /**
- * Loads all required CSV files and orchestrates chart drawing.
+ * Loads all required CSV files and draws charts.
  */
 function loadAndDrawCharts() {
     const dataPromises = [
-        // Ensure these paths match your actual folder structure. 
-        // If your CSVs are in the root folder, remove 'dataset/'.
         d3.csv('dataset/Age groups with the most Fines 2.csv', rowParser),
         d3.csv('dataset/Jurisdiction, age group and fines 2.csv', rowParser),
         d3.csv('dataset/Location and Fines 2.csv', rowParser)
@@ -110,18 +114,17 @@ function loadAndDrawCharts() {
 
     Promise.all(dataPromises)
         .then(([ageFinesData, heatmapData, locationFinesData]) => {
-            console.log("All data loaded successfully. Storing raw data.");
-            
-            // Store raw data globally
+            console.log("All data loaded. Storing raw data.");
+
             rawAgeFinesData = ageFinesData;
             rawHeatmapData = heatmapData;
             rawLocationFinesData = locationFinesData;
 
-            // Initial draw using the default filter (e.g., 'All')
-            updateCharts('All');
+            // Initial draw
+            updateCharts('All', 'All');
         })
         .catch(error => {
-            console.error('Error loading or processing data:', error);
+            console.error('Error loading data:', error);
             d3.select('.dashboard-container')
                 .append('div')
                 .style('grid-column', '1 / -1')
@@ -131,8 +134,5 @@ function loadAndDrawCharts() {
         });
 }
 
-// Expose the updateCharts function globally
 window.updateCharts = updateCharts;
-
-// Start the data loading process
 loadAndDrawCharts();
