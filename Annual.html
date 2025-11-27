@@ -4,13 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>COS30045 Data Visualisation Project</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/style-page1.css">
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Gantari:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
-        <nav>
+        <div class="nav-container"></div>
+        <nav style="display: none;">
             <a href="#" class="nav-link">Home</a>
             <a href="#" class="nav-link active" data-tab="annualFinesByJurisdiction">Annual Fines by Jurisdiction</a>
             <a href="#" class="nav-link" data-tab="annualFinesForMobilePhoneUse">Annual Fines for Mobile Phone Use</a>
@@ -73,9 +77,12 @@
     </main>
 
     <footer>
-        <p>COS30045 Data Visualisation Project</p>
+        <div class="footer-content">
+            <span class="footer-left">© Chuo</span>
+            <span class="footer-right">Generated using GenAI</span>
+        </div>
     </footer>
-
-    <script src="Javascript/script.js"></script>
+    <script src="js/navbar.js"></script>
+    <script src="js/script-page1.js"></script>
 </body>
 </html>

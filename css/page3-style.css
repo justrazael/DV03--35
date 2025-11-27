@@ -128,7 +128,7 @@ h1 {
 }
 
 .chart-card {
-    background: white;
+    background: #4a505c;
     padding: 1.5rem;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -141,7 +141,7 @@ h1 {
 .chart-title {
     font-size: 1.25em;
     font-weight: 600;
-    color: #333;
+    color: #ffff;
     margin-bottom: 1em;
     padding-bottom: 0.5em;
     border-bottom: 2px solid #eee;
@@ -178,7 +178,7 @@ h1 {
 
 /* Heatmap specific */
 .heatmap-cell:hover {
-    stroke: black;
+    stroke: #fff;
     stroke-width: 2px;
 }
 

@@ -60,7 +60,7 @@ function drawPieChart(data, selector) {
         .attr('d', arc)
         .attr('fill', d => color(d.data.LOCATION))
         .attr('stroke', 'white')
-        .style('stroke-width', '2px')
+        .style('stroke-width', '1px')
         .style('opacity', 0.8)
         .style('cursor', 'pointer')
         .transition()
@@ -120,7 +120,7 @@ function drawPieChart(data, selector) {
         })
         .style('text-anchor', d => (d.startAngle + d.endAngle) / 2 > Math.PI ? 'end' : 'start')
         .style('font-size', '10px')
-        .style('fill', '#666')
+        .style('fill', 'white')
         .style('pointer-events', 'none');
 
     // --- Legend ---
@@ -153,6 +153,6 @@ function drawPieChart(data, selector) {
         })
         .style('font-size', '12px')
         .style('alignment-baseline', 'middle')
-        .attr('fill', '#333');
+        .attr('fill', 'white');
 
 }

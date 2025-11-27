@@ -80,21 +80,34 @@ function drawHeatmap(data, selector) {
         });
 
     // Axes
-    svg.append('g')
+    const xAxis = svg.append('g')
         .attr('transform', `translate(0,${height})`)
-        .call(d3.axisBottom(x))
-        .selectAll('text')
+        .call(d3.axisBottom(x));
+
+    xAxis.selectAll('text')
         .attr('transform', 'rotate(-45)')
+        .style('fill', '#fff')
         .style('text-anchor', 'end');
+
+    xAxis.selectAll('line').style('stroke', '#fff'); // tick lines
+    xAxis.selectAll('path').style('stroke', '#fff'); // axis line
+
     
     svg.append('text')
         .attr('class', 'x-axis-label')
         .attr('x', width / 2)
         .attr('y', height + margin.bottom - 10)
         .style('text-anchor', 'middle')
+        .style('fill', 'white')
         .text('Jurisdiction');
 
-    svg.append('g').call(d3.axisLeft(y));
+    const yAxis = svg.append('g')
+        .call(d3.axisLeft(y));
+
+    yAxis.selectAll('text').style('fill', '#fff');   // label text
+    yAxis.selectAll('line').style('stroke', '#fff'); // tick lines
+    yAxis.selectAll('path').style('stroke', '#fff'); // axis line
+
         
     svg.append('text')
         .attr('class', 'y-axis-label')
@@ -103,6 +116,7 @@ function drawHeatmap(data, selector) {
         .attr('x', 0 - (height / 2))
         .attr('dy', '1em')
         .style('text-anchor', 'middle')
+        .style('fill', 'white')
         .text('Age Group');
 
     // Legend
@@ -129,6 +143,6 @@ function drawHeatmap(data, selector) {
         .attr('height', legendHeight)
         .style('fill', 'url(#linear-gradient)');
         
-    legendSvg.append('text').attr('y', legendHeight + 15).text('Low Fines');
-    legendSvg.append('text').attr('x', legendWidth).attr('y', legendHeight + 15).style('text-anchor', 'end').text('High Fines');
+    legendSvg.append('text').attr('y', legendHeight + 15).style('fill', 'white').text('Low Fines');
+    legendSvg.append('text').attr('x', legendWidth).attr('y', legendHeight + 15).style('text-anchor', 'end').style('fill', 'white').text('High Fines');
 }

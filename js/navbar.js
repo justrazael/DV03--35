@@ -1,9 +1,9 @@
 document.addEventListener('DOMContentLoaded', function() { //script triggers after the HTML file is loaded
   const navItems = [  //arrays to insert the text and htmls.
     ['Home', 'index.html'],
-    ['1st Page', 'Page1.html'],
+    ['Annual Fines by Jurisdiction', 'Annual.html'],
     ['2nd Page', 'Page2.html'],
-    ['3rd Page', 'Page3.html'],
+    ['Fines by Age and Locations', 'Page3.html'],
   ];
 
   let navHtml = '<nav id="navbar"><ul>'; //starts the navigation HTML string (ul)

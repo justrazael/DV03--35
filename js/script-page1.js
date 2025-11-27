@@ -253,9 +253,9 @@ document.querySelectorAll('.nav-link').forEach(link => {
 
 // --- DATA LOADING ---
 Promise.all([
-    d3.csv("Sum of fine.csv", d => ({ Year: +d.YEAR, Jurisdiction: d.JURISDICTION, Value: +d["Sum(FINES)"] })),
-    d3.csv("fines of each year.csv", d => ({ Year: +d["Year=YEAR"], Jurisdiction: d.JURISDICTION, Offences_per_10000_Licence_Holders: +d["Rate_per_10000_Holders"] })),
-    d3.json("australia_states.json")
+    d3.csv("dataset/Sum of fine.csv", d => ({ Year: +d.YEAR, Jurisdiction: d.JURISDICTION, Value: +d["Sum(FINES)"] })),
+    d3.csv("dataset/fines of each year.csv", d => ({ Year: +d["Year=YEAR"], Jurisdiction: d.JURISDICTION, Offences_per_10000_Licence_Holders: +d["Rate_per_10000_Holders"] })),
+    d3.json("js/australia_states.json")
 ]).then(([fines, mobile, geo]) => {
     annualFinesData = fines;
     mobileOffencesData = mobile;

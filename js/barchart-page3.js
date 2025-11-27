@@ -96,6 +96,7 @@ function drawBarChart(data, selector) {
         .attr('y', height)              // start from bottom
         .attr('text-anchor', 'middle')
         .style('opacity', 0)
+        .style('fill', '#fff')
         .transition()
         .duration(1000)
         .delay((d, i) => i * 100)
@@ -110,17 +111,37 @@ function drawBarChart(data, selector) {
         .call(d3.axisBottom(x))
         .selectAll('text')
         .attr('transform', 'rotate(-45)')
-        .style('text-anchor', 'end');
+        .style('text-anchor', 'end')
+        .style('fill', '#fff');
+
+    const xAxis = svg.append('g')
+        .attr('transform', `translate(0,${height})`)
+        .call(d3.axisBottom(x));
+
+    xAxis.selectAll('text').attr('transform', 'rotate(-45)')
+        .style('text-anchor', 'end')
+        .style('fill', '#fff');
+
+    xAxis.selectAll('line').style('stroke', '#fff');   // tick lines
+    xAxis.selectAll('path').style('stroke', '#fff');   // axis line
+
+
 
     svg.append('text')
         .attr('class', 'x-axis-label')
         .attr('x', width / 2)
         .attr('y', height + margin.bottom - 10)
         .style('text-anchor', 'middle')
+        .style('fill', '#fff')
         .text('Age Group');
 
-    svg.append('g')
+    const yAxis = svg.append('g')
         .call(d3.axisLeft(y).tickFormat(d3.format('.2s')));
+
+    yAxis.selectAll('text').style('fill', '#fff');  // text
+    yAxis.selectAll('line').style('stroke', '#fff'); // tick lines
+    yAxis.selectAll('path').style('stroke', '#fff'); // axis line
+
 
     svg.append('text')
         .attr('class', 'y-axis-label')
@@ -129,5 +150,6 @@ function drawBarChart(data, selector) {
         .attr('x', 0 - (height / 2))
         .attr('dy', '1em')
         .style('text-anchor', 'middle')
+        .style('fill', '#fff')
         .text('Mean Fines (AUD)');
 }
