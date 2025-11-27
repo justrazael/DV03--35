@@ -26,7 +26,6 @@ function drawPieChart(data, selector) {
 
     // Layout configuration
     // Reserve space for the legend on the right side
-    // We reserve 35% of the width for the legend, but cap it at 250px max, and ensure at least 150px if possible.
     const legendWidth = Math.min(Math.max(width * 0.35, 150), 250);
     const chartWidth = width - legendWidth;
     

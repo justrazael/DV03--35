@@ -41,11 +41,10 @@ function drawHeatmap(data, selector) {
         
     const maxFines = d3.max(data, d => d['Mean(FINES)']);
     
-    // START COLOR CHANGE: Using d3.interpolateRgb for custom color gradient (light yellow to dark blue)
+    // Using d3.interpolateRgb for custom color gradient (light yellow to dark blue)
     const colorScale = d3.scaleSequential()
         .interpolator(d3.interpolateRgb('lightyellow', 'darkblue'))
         .domain([0, maxFines]);
-    // END COLOR CHANGE
     
     // Draw Cells
     svg.selectAll('.cell')

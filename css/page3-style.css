@@ -70,7 +70,7 @@ html, body {
 .controls-container label {
   font-family: sans-serif;
   font-size: 1.1em; 
-  margin-right: 10px; 
+  margin-left: 0.5em;
   color: #fff;
 }
 
@@ -79,9 +79,8 @@ html, body {
   font-size: 1rem; 
   border-radius: 5px; 
   border: 1px solid #ccc;
+  margin-left: 0.5em;
 }
-
-
 
 /*
  * Dashboard Layout

@@ -5,18 +5,14 @@ let rawAgeFinesData = [];
 let rawHeatmapData = [];
 let rawLocationFinesData = [];
 
-/**
- * Parses a CSV row, converting the fine mean to a number.
- */
+/*Parses a CSV row, converting the fine mean to a number.*/
 function rowParser(d) {
     d['Mean(FINES)'] = +d['Mean(FINES)'];
     d['YEAR'] = +d['YEAR'];
     return d;
 }
 
-/**
- * Helper function to aggregate pie chart data by summing fines.
- */
+/*Helper function to aggregate pie chart data by summing fines.*/
 function aggregatePieChartData(data) {
     const aggregatedMap = d3.rollup(
         data,
@@ -30,9 +26,7 @@ function aggregatePieChartData(data) {
     }));
 }
 
-/**
- * Helper function to aggregate bar chart data by summing fines.
- */
+/*Helper function to aggregate bar chart data by summing fines.*/
 function aggregateBarChartData(data) {
     const aggregatedMap = d3.rollup(
         data,
@@ -46,9 +40,7 @@ function aggregateBarChartData(data) {
     }));
 }
 
-/**
- * Filters raw data based on selected year, age group, and jurisdiction.
- */
+/*Filters raw data based on selected year, age group, and jurisdiction.*/
 function updateCharts(selectedYear, selectedAge = 'All', selectedJurisdiction = 'All') {
     console.log(`Updating charts → Year: ${selectedYear}, Age: ${selectedAge}, Jurisdiction: ${selectedJurisdiction}`);
 
@@ -64,7 +56,7 @@ function updateCharts(selectedYear, selectedAge = 'All', selectedJurisdiction = 
             ? () => true
             : d => d.AGE_GROUP === selectedAge;
 
-    // ⭐ NEW: JURISDICTION FILTER (heatmap only)
+    // JURISDICTION FILTER (heatmap only)
     const jurisdictionFilter =
         selectedJurisdiction === 'All'
             ? () => true
@@ -101,9 +93,7 @@ function updateCharts(selectedYear, selectedAge = 'All', selectedJurisdiction = 
     }
 }
 
-/**
- * Loads all required CSV files and draws charts.
- */
+/*Loads all required CSV files and draws charts.*/
 function loadAndDrawCharts() {
     const dataPromises = [
         d3.csv('dataset/Age groups with the most Fines 2.csv', rowParser),

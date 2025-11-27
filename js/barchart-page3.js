@@ -1,10 +1,8 @@
 /* global d3 */
 
-/**
- * Draws a D3 bar chart for the Age Groups with the Most Fines.
- * @param {Array<object>} data - The dataset for the bar chart.
- * @param {string} selector - The ID of the container element.
- */
+/** Draws a D3 bar chart for the Age Groups with the Most Fines.
+  @param {Array<object>} data - The dataset for the bar chart.
+  @param {string} selector - The ID of the container element.*/
 function drawBarChart(data, selector) {
     // 1. Clear existing SVG
     d3.select(selector).select('svg').remove();
@@ -124,8 +122,6 @@ function drawBarChart(data, selector) {
 
     xAxis.selectAll('line').style('stroke', '#fff');   // tick lines
     xAxis.selectAll('path').style('stroke', '#fff');   // axis line
-
-
 
     svg.append('text')
         .attr('class', 'x-axis-label')
