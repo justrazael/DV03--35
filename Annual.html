@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COS30045 Data Visualisation Project</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="#" class="nav-link">Home</a>
+            <a href="#" class="nav-link active" data-tab="annualFinesByJurisdiction">Annual Fines by Jurisdiction</a>
+            <a href="#" class="nav-link" data-tab="annualFinesForMobilePhoneUse">Annual Fines for Mobile Phone Use</a>
+        </nav>
+    </header>
+
+    <main>
+        <section id="annualFinesByJurisdiction" class="tab-content active">
+            <div class="card">
+                <h2>Annual Fines by Jurisdiction</h2>
+                <div class="controls">
+                    <div class="slider-container">
+                        <label for="yearSlider">Year:</label>
+                        <input type="range" id="yearSlider" min="2008" max="2024" value="2024">
+                        <span id="currentYear">2024</span>
+                    </div>
+                  
+                    <div class="jurisdiction-display">
+                        <label>Now Jurisdiction:</label>
+                        <span id="selectedJurisdiction">NSW</span>
+                    </div>
+                    <div class="total-fines-display">
+                        <label>TOTAL FINES:</label>
+                        <span id="totalFines">90,0000</span>
+                    </div>
+                </div>  
+                <div class="jurisdiction-display">
+                    <label for="jurisdictionSelect">Jurisdiction:</label>
+                      <select id="jurisdictionSelect" class="dropdown-style">
+                            <option value="NSW">NSW</option>
+                            <option value="VIC">VIC</option>
+                            <option value="QLD">QLD</option>
+                            <option value="SA">SA</option>
+                            <option value="WA">WA</option>
+                            <option value="TAS">TAS</option>
+                            <option value="NT">NT</option>
+                            <option value="ACT">ACT</option>
+                      </select>
+                </div>
+                <div class="chart-container">
+                    <div id="australia-map" class="map-chart-area"></div>
+                    <div id="line-chart-fines"></div>
+                </div>
+            </div>
+
+                <div class="card" style="margin-top: 20px; background-color: #4a505c;">
+                    <h2 style="text-align: center;">
+                        Mobile Phone Offences per 10k Holders (<span id="mobileYearDisplay">2024</span>)
+                    </h2>
+                    <div id="mobile-bar-chart-bottom" style="width: 100%; height: 400px;"></div>
+                </div>
+        </section>
+
+        <section id="annualFinesForMobilePhoneUse" class="tab-content">
+            <div class="card">
+                <h2>Mobile Phone Offences per 10,000 Licence Holders by Jurisdiction, YEAR</h2>
+                <div id="bar-chart-mobile-offences"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>COS30045 Data Visualisation Project</p>
+    </footer>
+
+    <script src="Javascript/script.js"></script>
+</body>
+</html>
