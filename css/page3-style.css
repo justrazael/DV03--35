@@ -161,7 +161,9 @@ h1 {
     stroke: #fff;
     stroke-width: 2px;
 }
-
+/*
+ * Footer Styles
+ */
 .footer-content{
   background-color: #4E3AA2;
   padding: 0.5em;

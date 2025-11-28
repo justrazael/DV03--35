@@ -4,15 +4,14 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Annual Fines Dashboard</title>
-    <link rel="stylesheet" href="style-page2.css">
+    <link rel="stylesheet" href="css/style-page2.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Gantari:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
   </head>
   <body>
-    <div class="top-bar">
-      <nav class="tabs">
-        <a class="tab">Home</a>
-        <a class="tab">Annual Fines by Jurisdiction</a>
-        <a class="tab active">Annual Fines for Mobile Phone Use</a>
-      </nav>
+    <div>
+      <div class="nav-container"></div>
     </div>
 
     <header class="hero">
@@ -53,11 +52,16 @@
       </section>
     </main>
 
-    <footer class="footer">COS30045 Data Visualisation Project</footer>
-
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <!-- SheetJS for client-side Excel parsing -->
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <script src="js/navbar.js"></script>
     <script src="js/dashboard-page2.js"></script>
   </body>
+  <footer>
+        <div class="footer-content">
+            <span class="footer-left">© 2025 Bryan Leong Quan </span>
+            <span class="footer-right">Generated using GenAI</span>
+        </div>
+  </footer>
 </html>

@@ -2,7 +2,7 @@
 /* Dashboard: read workbook and render charts from data if possible. */
 
 (async function(){
-  const excelPath = 'police_enforcement_2024_fines.xlsx';
+  const excelPath = 'dataset/police_enforcement_2024_fines.xlsx';
 
   async function loadWorkbook(path){
     try{

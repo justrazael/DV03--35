@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function() { //script triggers aft
   const navItems = [  //arrays to insert the text and htmls.
     ['Home', 'index.html'],
     ['Annual Fines by Jurisdiction', 'Annual.html'],
-    ['2nd Page', 'Page2.html'],
+    ['i dont know', 'page2.html'],
     ['Fines by Age and Locations', 'Page3.html'],
   ];
 
