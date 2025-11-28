@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Annual Fines Dashboard</title>
+    <link rel="stylesheet" href="style-page2.css">
+  </head>
+  <body>
+    <div class="top-bar">
+      <nav class="tabs">
+        <a class="tab">Home</a>
+        <a class="tab">Annual Fines by Jurisdiction</a>
+        <a class="tab active">Annual Fines for Mobile Phone Use</a>
+      </nav>
+    </div>
+
+    <header class="hero">
+      <button class="hero-btn">Annual Fines for Mobile Phone Use</button>
+      <div class="hero-controls">
+        <label>Detection method</label>
+        <select id="detection-select"><option>All</option><option>Camera issued fines</option><option>Police issued fines</option></select>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="row row-top">
+        <div class="card card-wide" id="chart-line">
+          <!-- line chart area -->
+          <div class="chart-canvas" id="line-canvas"></div>
+        </div>
+      </section>
+
+      <section class="row row-bottom">
+        <div class="card" id="left-panel">
+          <h3 class="panel-title">Camera vs Police Issued</h3>
+          <div class="panel-sub">
+            <div><strong>Year</strong></div>
+            <div class="small-muted">All</div>
+          </div>
+          <div class="stats-row">
+            <div class="stat"><div class="stat-value">12,000</div><div class="stat-label">Police fines</div></div>
+            <div class="stat"><div class="stat-value">10,000</div><div class="stat-label">Mobile fines</div></div>
+          </div>
+          <div id="pie-canvas" class="chart-canvas small"></div>
+        </div>
+
+        <div class="card" id="right-panel">
+          <h3 class="panel-title">Correlation between offences and detection method</h3>
+          <div class="panel-sub control-inline"><label>Detection method</label><select id="m2"><option>All</option></select></div>
+          <div id="scatter-canvas" class="chart-canvas"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">COS30045 Data Visualisation Project</footer>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <!-- SheetJS for client-side Excel parsing -->
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <script src="js/dashboard-page2.js"></script>
+  </body>
+</html>
