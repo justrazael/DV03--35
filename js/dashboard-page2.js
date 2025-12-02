@@ -54,11 +54,20 @@
   // Shared state for filtering and redraws
   let wbRows = null;
   let detectedKeys = null;
+  
   let currentFilter = 'All';
-  let currentYearFilter = 'All';
-  let currentDetectionFilter = 'All';
-  let currentScatterDetection = 'All';
+  
+  // Left Panel Filters (Pie & Stats)
+  let currentYearFilter = 'All'; 
   let currentPieDetection = null;
+
+  // Right Panel Filters (Scatter)
+  let currentScatterYear = 'All'; // New independent state for scatter chart
+  let currentScatterDetection = 'All';
+
+  // Global Detection (Top Bar) - mirrored to currentFilter
+  let currentDetectionFilter = 'All';
+
 
   // Map raw detection values to friendly labels
   function mapDetectionLabel(v){
@@ -139,16 +148,33 @@
     const valueKey = detectedKeys && detectedKeys.numericKeys && detectedKeys.numericKeys[0];
     const ys = d3.rollup(wbRows, v=> valueKey ? d3.sum(v,d=> +d[valueKey] || 0) : v.length, d=>+d[yearKey]);
     const arr = Array.from(ys).map(([y,sum])=>({year:+y,sum})).filter(a=>!isNaN(a.year)).sort((a,b)=>a.year-b.year);
+    
+    // --- 1. Populate Left Panel Year (Pies/Stats) ---
     const sel = document.getElementById('year-select');
-    if(!sel) return;
-    sel.innerHTML = '';
-    // add 'All' option back for the pie year selection
-    const optAll = document.createElement('option'); optAll.value = 'All'; optAll.textContent = 'All'; sel.appendChild(optAll);
-    // only include years with positive totals
-    arr.filter(a=>a.sum>0).forEach(a=>{ const o=document.createElement('option'); o.value = a.year; o.textContent = a.year; sel.appendChild(o); });
-    // default to 'All' for the pie year selection
-    if(sel.options && sel.options.length>0){ sel.selectedIndex = 0; currentYearFilter = sel.value; }
-    sel.addEventListener('change', ()=>{ currentYearFilter = sel.value; applyFilterAndRender(currentDetectionFilter); });
+    if(sel) {
+        sel.innerHTML = '';
+        // add 'All' option back for the pie year selection
+        const optAll = document.createElement('option'); optAll.value = 'All'; optAll.textContent = 'All'; sel.appendChild(optAll);
+        // only include years with positive totals
+        arr.filter(a=>a.sum>0).forEach(a=>{ const o=document.createElement('option'); o.value = a.year; o.textContent = a.year; sel.appendChild(o); });
+        
+        // default to 'All' for the pie year selection
+        if(sel.options && sel.options.length>0){ sel.selectedIndex = 0; currentYearFilter = sel.value; }
+        
+        sel.addEventListener('change', ()=>{ currentYearFilter = sel.value; applyFilterAndRender(currentDetectionFilter); });
+    }
+
+    // --- 2. Populate Right Panel Year (Scatter) ---
+    const scatterSel = document.getElementById('scatter-year-select');
+    if(scatterSel) {
+        scatterSel.innerHTML = '';
+        const optAllScatter = document.createElement('option'); optAllScatter.value = 'All'; optAllScatter.textContent = 'All'; scatterSel.appendChild(optAllScatter);
+        arr.filter(a=>a.sum>0).forEach(a=>{ const o=document.createElement('option'); o.value = a.year; o.textContent = a.year; scatterSel.appendChild(o); });
+        
+        if(scatterSel.options && scatterSel.options.length>0){ scatterSel.selectedIndex = 0; currentScatterYear = scatterSel.value; }
+        
+        scatterSel.addEventListener('change', ()=>{ currentScatterYear = scatterSel.value; applyFilterAndRender(currentDetectionFilter); });
+    }
   }
 
   function applyFilterAndRender(selected){
@@ -172,10 +198,12 @@
       }
     }
   const usedCatKey = (detectedKeys && detectedKeys.catKey) || catKey;
+  
   // apply detection filter first — support both per-row detection or aggregated detection columns
   let filtered = rows;
   let valueKeyForLine = numericKeys && numericKeys[0];
   let lineRows = rows;
+  
   if(detectedKeys && detectedKeys.isAggregatedDetection && detectedKeys.detectionCols){
     // When dataset contains aggregated detection numeric columns (e.g., Police/Camera),
     // selecting a detection category should filter rows where that column has a positive value
@@ -195,17 +223,22 @@
       valueKeyForLine = numericKeys && numericKeys[0];
     }
   }
+
+  // --- FILTERING FOR LEFT PANEL (STATS & PIE) ---
   // apply year filter if selected (affects pie and stats)
   if(currentYearFilter && currentYearFilter !== 'All' && yearKey){
     filtered = filtered.filter(r=>String(r[yearKey]) === String(currentYearFilter));
   }
+  
   if(yearKey && valueKeyForLine) renderLineFromRows(lineRows, yearKey, valueKeyForLine);
+  
   // Prepare pie rows based on pie-specific year selection (pie detection should NOT affect the detection-split pie)
   let pieRowsYearOnly = rows;
   // apply pie year filter (year-select is for pie area and includes 'All')
   if(currentYearFilter && currentYearFilter !== 'All' && yearKey){
     pieRowsYearOnly = pieRowsYearOnly.filter(r=>String(r[yearKey]) === String(currentYearFilter));
   }
+  
   // Now build the rows used for the main pie (which does respect the pie detection selector)
   let pieRows = pieRowsYearOnly;
   // apply pie detection selection if present (affects the jurisdiction pie)
@@ -228,14 +261,18 @@
     // render the Police vs Camera split pie using ONLY the Year filter (ignore pie detection)
     renderDetectionSplit(pieRowsYearOnly, usedCatKey);
   }
-  // Prepare scatter rows separately so the scatter selector filters by detection only
-  // The scatter chart should follow the pie Year selection (so apply the pie's year filter)
+
+  // --- FILTERING FOR RIGHT PANEL (SCATTER) ---
+  // Prepare scatter rows separately. 
+  // It should follow currentScatterYear and currentScatterDetection.
   let scatterRows = rows;
-  // apply pie year filter to scatter (so scatter respects Year selection in pie area)
-  if(currentYearFilter && currentYearFilter !== 'All' && yearKey){
-    scatterRows = scatterRows.filter(r=>String(r[yearKey]) === String(currentYearFilter));
+  
+  // 1. Apply Scatter Year Filter (New Logic)
+  if(currentScatterYear && currentScatterYear !== 'All' && yearKey){
+    scatterRows = scatterRows.filter(r=>String(r[yearKey]) === String(currentScatterYear));
   }
-  // apply scatter-specific detection filter (skip filtering when 'All' is selected)
+
+  // 2. Apply Scatter Detection Filter (skip filtering when 'All' is selected)
   if(currentScatterDetection && currentScatterDetection !== 'All'){
     if(detectedKeys && detectedKeys.isAggregatedDetection && detectedKeys.detectionCols){
       const col = detectedKeys.detectionCols[currentScatterDetection];
@@ -244,6 +281,7 @@
       scatterRows = scatterRows.filter(r=> String(r.__detection || 'Unknown') === String(currentScatterDetection));
     }
   }
+
   if(numericKeys && numericKeys.length>=2){
     if(detectedKeys && detectedKeys.isAggregatedDetection && detectedKeys.detectionCols){
       // For aggregated detection datasets, compute x as the selected detection column and y as total detections
