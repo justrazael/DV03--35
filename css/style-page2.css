@@ -3,10 +3,10 @@
   --panel:#2b184f;
   --accent:#7b3cff;
   --muted:#d7ccee;
-  --card:#4a505c;
+  --card:#2f1c4b;
 }
 *{box-sizing:border-box}
-body{margin:0;font-family: Gantari, Arial,sans-serif;background:var(--bg);color:var(--muted)}
+body{margin:0;font-family:Segoe UI,Arial,Helvetica,sans-serif;background:var(--bg);color:var(--muted)}
 .top-bar{background:linear-gradient(90deg,var(--panel),#3a2060);padding:6px 12px}
 .tabs{display:flex;gap:8px}
 .tab{color:var(--muted);padding:6px 10px;border-radius:4px;font-size:0.9rem}
@@ -36,96 +36,5 @@ body{margin:0;font-family: Gantari, Arial,sans-serif;background:var(--bg);color:
 
 @media(max-width:900px){.row{flex-direction:column}.card{min-height:220px}}
 
-/*
- * Navigation Styles
- */
-.nav-container {
-  display: flex;
-  align-items: center; 
-  background-color: #4E3AA2;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.nav-container ul {
-  display: flex;
-  list-style-type: none;
-  padding: 1em;
-  background-color: #4E3AA2;
-  padding-left: 3em;
-  font-weight: bold;
-  margin: 0;
-}
-
-.nav-container li {
-  display: block;
-  margin-right: 2em; 
-  position: relative;
-}
-
-.nav-container li:not(:last-child)::after {
-  content: "";
-  position: absolute;
-  right: -1em;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 0.1em;
-  height: 2em;
-  background: #888;
-}
-
-.nav-container li a{
-    display: block;
-    text-decoration: none;
-    color: white
-}
-
-.nav-container li:hover a{
-   color: #7356e7;
-}
-
-/*footer styles*/
-.footer-content{
-  background-color: #4E3AA2;
-  padding: 0.5em;
-  text-align:left;
-  color: white;
-}
-
-footer span{
-  color: white;
-  font-weight: bold;
-}
-
-.footer-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: auto;
-}
-
-.footer-left {
-  text-align: left;
-  padding-left: 2em;
-  padding-top: 0.2em;
-}
-
-.footer-right {
-  text-align: right;
-  padding-top: 0.2em;
-  padding-right: 2em;
-}
-
-html, body {
-    height: 100%;
-}
-
-body {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
-
-footer {
-    margin-top: auto;
-}
+/* Tooltip for D3 charts */
+.d3-tooltip{position:absolute;pointer-events:none;background:rgba(0,0,0,0.78);color:#fff;padding:6px 8px;border-radius:4px;font-size:12px;box-shadow:0 4px 10px rgba(0,0,0,0.4)}
