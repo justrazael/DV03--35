@@ -96,9 +96,9 @@ function updateCharts(selectedYear, selectedAge = 'All', selectedJurisdiction = 
 /*Loads all required CSV files and draws charts.*/
 function loadAndDrawCharts() {
     const dataPromises = [
-        d3.csv('dataset/Age groups with the most Fines 2.csv', rowParser),
-        d3.csv('dataset/Jurisdiction, age group and fines 2.csv', rowParser),
-        d3.csv('dataset/Location and Fines 2.csv', rowParser)
+        d3.csv('dataset/barchart_page3.csv', rowParser),
+        d3.csv('dataset/heatmap_page3.csv', rowParser),
+        d3.csv('dataset/piechart_page3.csv', rowParser)
     ];
 
     Promise.all(dataPromises)
